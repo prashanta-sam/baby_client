@@ -1,21 +1,15 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import { postForm, postJson } from "../../api/Api";
 
 
 const initialState={
     status:0, 
-    usersInfo: [],
+    userInfo: {},
     token: localStorage.getItem("token") || "",
     error: null,
     isAuth:false
 }
 
-export const userSignup=createAsyncThunk( 'user/userSignup',
-    async (formData) => {
-        const data = await postForm('user/signup',formData);
-        return data;
-      }
-)
 
 
 
@@ -23,39 +17,45 @@ const UserSlice=createSlice({
     name:'user',
     initialState,
     reducers: {
-        logout(state) {
-             state.token = "";
+        usersLoading(state, action) {
+            // Use a "state machine" approach for loading state instead of booleans
+            if(state.status === 1) {
+                state.status = 0
+            }
         },
-    },
-    extraReducers(builder) {
-        builder
-        // product api
-        .addCase(userSignup.pending, (state) => {
-            state.status = 'loading';
-          })
-        .addCase(userSignup.fulfilled, (state, action) => {
-            
-             const {status,token,msg,data} = action.payload;   
-             state.status = status;
-             state.error = msg 
-             if(status===1)
-             {               
-                state.usersInfo = data;
+        usersReceived(state, action) {
+            const {status,token,msg,data} = action.payload;   
+            if(status === 1) 
+            {
+                state.status = 1
+                state.userInfo = data
+                state.error=msg
                 state.isAuth=true
-                state.token=token           
-                localStorage.setItem('token', token);               
-             }     
-             
-        })
-        .addCase(userSignup.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.error.message;
-          })
-          
-      }
+                localStorage.setItem('token', token);    
+            }
+        },
+        logout(state) {
+        
+            state.error=null
+            state.status=0
+            state.token = "";
+            state.isAuth=false
+            state.userInfo={}
+            //localStorage.removeItem("token");
+            localStorage.setItem("token", '');
 
+       },
+      
+    }
 })
 
 
 
+export const userSignup = (formData) => async (dispatch) => {
+    dispatch(usersLoading()); 
+    const response = await postForm('user/signup',formData); 
+    dispatch(usersReceived(response));
+
+}
+export const {usersLoading, usersReceived,logout} = UserSlice.actions;
 export default UserSlice.reducer

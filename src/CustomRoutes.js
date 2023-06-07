@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { PUBLIC_ROUTE } from './route.constants';
+import { PRIVATE_ROUTE, PUBLIC_ROUTE } from './route.constants';
 import { Loader } from './utility/Loader';
 
 import ErrorBoundary from './ErrorBoundary'
@@ -12,12 +12,31 @@ import  MyHeader  from "./components/layout/MyHeader";
 import LayoutMain from "./components/layout/LayoutMain";
 import { RND } from "./components/dev/RND";
 import Signup from "./components/common/Signup";
+import { Cart } from "./components/cart/Cart";
 
 
 const Signin = lazy(() => import('./components/common/Signin'))
 const FAQ = lazy(() => import('./components/common/FAQ'))
 const AboutUs = lazy(() => import('./components/common/AboutUs'))
 const Home =lazy(()=>import('./components/dashboard/Home'))
+
+
+export const ProtectedRoute = ({ children }) => {
+  const  user  =  useSelector((state)=> state.user.isAuth);
+  if (!user) {
+    // user is not authenticated
+    return <Navigate to="/signin" replace/>;
+  }
+  return children;
+};
+export const HomeRoute = ({ children }) => {
+  const  isAuth  =  useSelector((state)=> state.user.isAuth);
+  if (isAuth) {    // user is not authenticated
+    return <Navigate to="/" replace/>;
+  }
+  return children;
+};
+
 export const publicRoutes = [
       {
         path: PUBLIC_ROUTE.ABOUT_US,
@@ -31,44 +50,73 @@ export const publicRoutes = [
         path: PUBLIC_ROUTE.SIGN_IN,
         component: <Signin/>,
       },
+    
+      {
+        path:PUBLIC_ROUTE.TESTING_URL,
+        component: <RND/>,
+      },
+      {
+        path:PUBLIC_ROUTE.HOME,
+        component: <Home/>,
+      },
       {
         path: PUBLIC_ROUTE.SIGN_UP,
         component: <Signup/>,
       },
-      {
-        path:PUBLIC_ROUTE.TESTING_URL,
-        component: <RND/>,
-      }
+]
+export const privateRoutes = [
+  {
+    path: PRIVATE_ROUTE.CART,
+    component:  <Cart/>,
+  },
+ 
 ]
 
 
-export const ProtectedRoute = ({ children }) => {
-
-    const  user  =  useSelector((state)=> state.user.isAuth);
-
-    if (!user) {
-      // user is not authenticated
-      return <Navigate to="/signin" replace/>;
-    }
-    return children;
-  };
 export default function CustomRoutes() {
+  const  isAuth  =  useSelector((state)=> state.user.isAuth);
     return (
       <ErrorBoundary>
         <Suspense fallback={<Loader />}>    
             <BrowserRouter>     
                <LayoutMain>
                     <Routes>
+                            {/* PUBLIC */}
                             {
+
                             publicRoutes.map(({path,component},index) => (
-                                <Route key={index} path={path} element={component}/>  
-                            ))}                   
-                            <Route path="/"element={<ProtectedRoute>
+                              
+
+                                 ((path==='/signin' || path==='/signup') && isAuth) ?
+                                    <Route key={index} path={path} element={<Home/>}/>
+                                   :                                   
+                                   <Route key={index} path={path} element={component}
+                                
+                                 
+                                  />  
+                            ))                          
+                        
+                            
+                            }      
+                          {/* PRIVATE */}
+                           {
+
+                              privateRoutes.map(({path,component},index) => (
+                                <Route key={index} path={path} element={
+                                  <ProtectedRoute>
+                                      <component />
+                                  </ProtectedRoute>
+                                }/>  
+                            ))                          
+
+
+                            }  
+                           
+                              {/* <Route path="/cart" element={<ProtectedRoute>
                                                       <Home />
                                                     </ProtectedRoute>
                                                   }
-                              />
-                                
+                              /> */}
                         
                   </Routes>
                 </LayoutMain>

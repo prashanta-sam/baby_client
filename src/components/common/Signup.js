@@ -5,7 +5,7 @@ import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
 import { userSignup } from '../../Slices/user/UserSlice';
 import Notification from '../../utility/Notification'
-import { Navigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 const { Option } = Select;
 const layout = {
@@ -23,14 +23,15 @@ const tailLayout = {
   },
 };
 const Signup = () => {
-
+  const navigate = useNavigate();
   const {
       status,
-      usersInfo,
+      userInfo,
       token,
       error,
       isAuth
   }= useSelector((state) => state.user)
+  console.table(isAuth)
   const dispatch = useDispatch()
 
 
@@ -85,22 +86,16 @@ const Signup = () => {
     formData.append('password_confirmation',values.confirm_password)
 
     try {
-      // const done = await dispatch(userSignup(formData)).unwrap()
-      dispatch(userSignup(formData))
-      .unwrap()
-      .then((done) => {
-        // handle result here
+       const done = await dispatch(userSignup(formData)).unwrap()
+
    
             Notification(
-              done.status===1? 'success' : done.status===-1 ? 'info' :'error',
-              done.msg,'',3000);
+              status===1? 'success' : status===-1 ? 'info' :'error',
+              error,'',3000);
 
             if(done.status===1)
-              Navigate()
-      })
-      .catch((rejectedValueOrSerializedError) => {
-        // handle error here
-      })
+                 navigate('/')
+     
 
       
 
@@ -222,6 +217,7 @@ const Signup = () => {
           Fill form
         </Button> */}
       </Form.Item>
+      <p>{userInfo?.user_name}</p>
       {status===1 ? null :
         <span style={{
           fontWeight: 'bold',
