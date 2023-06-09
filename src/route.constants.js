@@ -12,7 +12,8 @@ export const PUBLIC_ROUTE = {
     AUTH0_CALLBACK: '/auth0loginCallback',  
     ABOUT_US:'/about-us',
     FAQ:'/faq',
-    PRODUCT_LIST:'/product'
+    PRODUCT_LIST:'/product',
+    INFINITE_SCROLL:'/scroll'
 
   };
   

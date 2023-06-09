@@ -14,6 +14,7 @@ import { RND } from "./components/dev/RND";
 import Signup from "./components/common/Signup";
 import { Cart } from "./components/cart/Cart";
 import { ProductList } from "./components/product/ProductList";
+import InfiniteScrollList from "./components/dev/InfiniteScrollList";
 
 
 const Signin = lazy(() => import('./components/common/Signin'))
@@ -68,6 +69,10 @@ export const publicRoutes = [
         path: PUBLIC_ROUTE.PRODUCT_LIST,
         component: <ProductList/>,
       },
+      {
+        path: PUBLIC_ROUTE.INFINITE_SCROLL,
+        component: <InfiniteScrollList/>,
+      },
 ]
 export const privateRoutes = [
   {
@@ -81,7 +86,7 @@ export const privateRoutes = [
 export default function CustomRoutes() {
   const  isAuth  =  useSelector((state)=> state.user.isAuth);
     return (
-      <ErrorBoundary>
+      // <ErrorBoundary>
         <Suspense fallback={<Loader />}>    
             <BrowserRouter>     
                <LayoutMain>
@@ -124,6 +129,6 @@ export default function CustomRoutes() {
                 </LayoutMain>
             </BrowserRouter>
         </Suspense>
-      </ErrorBoundary>
+      // </ErrorBoundary>
     );
   }

@@ -15,6 +15,7 @@ import {
   REGISTER,
 } from 'redux-persist'
 import testUserSlice  from '../Slices/user/testUserSlice';
+import ClassListSlice from '../Slices/product/ClassListSlice';
 
 const persistConfig = {
   key: 'root',
@@ -25,7 +26,8 @@ const persistConfig = {
 const reducer = combineReducers({
     product:ProductSlice,
     user:UserSlice,
-    testuser:testUserSlice
+    testuser:testUserSlice,
+    classList:ClassListSlice
   })
   const persistedReducer = persistReducer(persistConfig, reducer)
 

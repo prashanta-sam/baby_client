@@ -1,4 +1,7 @@
 import React, { useEffect } from 'react'
+import ClassList from '../product/ClassList'
+import InfiniteScrollList from '../dev/InfiniteScrollList';
+import ScrollList, { scrollWraper } from '../dev/ScrollList';
 
  const Home = () => {
   useEffect(()=>{
@@ -7,7 +10,13 @@ import React, { useEffect } from 'react'
       "Home", "/");
   },[])
   return (
-    <div>Home</div>
+    <>
+        <div>Home</div>
+         {/* <ClassList/>  */}
+         <InfiniteScrollList/>
+        
+    </>
+   
   )
 }
 export default Home
