@@ -11,6 +11,8 @@ const setApi = (ctxApi) => {
 
 const createNotification = async (type, message, description, duration) => {
     const key = `open${Date.now()}`;
+
+    api.destroy(key)
     const close = () => {
         // console.log(
         //   'Notification was closed. Either the close button was clicked or duration time elapsed.',
@@ -21,7 +23,7 @@ const createNotification = async (type, message, description, duration) => {
       }
         const timer = setTimeout(() => {
             //console.log('Auto close in 3 second!')
-            //api.destroy(key)
+            api.destroy(key)
         }, 3000);
 
     const btn = (

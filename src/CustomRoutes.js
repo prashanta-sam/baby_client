@@ -13,6 +13,7 @@ import LayoutMain from "./components/layout/LayoutMain";
 import { RND } from "./components/dev/RND";
 import Signup from "./components/common/Signup";
 import { Cart } from "./components/cart/Cart";
+import { ProductList } from "./components/product/ProductList";
 
 
 const Signin = lazy(() => import('./components/common/Signin'))
@@ -63,6 +64,10 @@ export const publicRoutes = [
         path: PUBLIC_ROUTE.SIGN_UP,
         component: <Signup/>,
       },
+      {
+        path: PUBLIC_ROUTE.PRODUCT_LIST,
+        component: <ProductList/>,
+      },
 ]
 export const privateRoutes = [
   {
@@ -112,11 +117,8 @@ export default function CustomRoutes() {
 
                             }  
                            
-                              {/* <Route path="/cart" element={<ProtectedRoute>
-                                                      <Home />
-                                                    </ProtectedRoute>
-                                                  }
-                              /> */}
+                     
+                
                         
                   </Routes>
                 </LayoutMain>

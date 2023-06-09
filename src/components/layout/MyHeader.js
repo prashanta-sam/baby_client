@@ -28,7 +28,7 @@ const MyHeader = () => {
             isAuth ?
             <>
              <p>{userInfo?.user_name}</p>
-             <button onClick={dispatch(logout())}>Logout</button>
+             <button onClick={()=> dispatch(logout())}>Logout</button>
             </> 
             : 
             <>
@@ -40,6 +40,8 @@ const MyHeader = () => {
         </div>
       </div>
     </nav>  
+
+    
   )
 }
 

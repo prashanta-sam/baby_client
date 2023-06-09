@@ -1,11 +1,11 @@
 import { Button, Form, Input, Select ,Tooltip} from 'antd';
 import { EyeOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
-import { userSignup } from '../../Slices/user/UserSlice';
+import { userSignup,setError } from '../../Slices/user/UserSlice';
 import Notification from '../../utility/Notification'
-import { useNavigate} from 'react-router-dom';
+import { Navigate, useNavigate} from 'react-router-dom';
 
 const { Option } = Select;
 const layout = {
@@ -29,7 +29,7 @@ const Signup = () => {
       userInfo,
       token,
       error,
-      isAuth
+      isAuth,count
   }= useSelector((state) => state.user)
   console.table(isAuth)
   const dispatch = useDispatch()
@@ -57,7 +57,7 @@ const Signup = () => {
     else
     setErrorMessage('')
   }
-  const onGenderChange = (value) => {
+  const onGenderChange = async (value) => {
     switch (value) {
       case 'male':
         form.setFieldsValue({
@@ -78,38 +78,17 @@ const Signup = () => {
     }
   };
   const onFinish = async (values) => {
-    console.log(values);
     let formData=new FormData()
     formData.append('username',values.username)
     formData.append('email',values.email)
     formData.append('password',values.password)
     formData.append('password_confirmation',values.confirm_password)
-
-    try {
-       const done = await dispatch(userSignup(formData)).unwrap()
-
-   
-            Notification(
-              status===1? 'success' : status===-1 ? 'info' :'error',
-              error,'',3000);
-
-            if(done.status===1)
-                 navigate('/')
-     
-
-      
-
-        // Navigate.push("/home");
+    dispatch(userSignup(formData))           
+    if(status===1)
+    { 
+      return navigate("/", { replace: true })            
     }
-    catch (rejectedValueOrSerializedError) 
-    {
-      //showToast('error', `Fetch failed: ${err.message}`)
-      console.log(rejectedValueOrSerializedError)
-      Notification(
-        'error',
-        error,'',3000);
-    }
-
+             
   };
   const onReset = () => {
     form.resetFields();
@@ -127,7 +106,22 @@ const Signup = () => {
     setIsSHown((isShown) => !isShown);
   };
 
- 
+  useEffect(() => {
+    dispatch(setError())
+    return () => {            
+    }
+  }, [])
+  
+  useEffect(() => {
+    dispatch(setError())
+    if (error===null || error ==='') {
+        return;
+    }
+    Notification(
+      status===1? 'success' : status===-1 ? 'info' :'error',
+      error,'',3000);     
+}, [error]);
+
   return (
     <Form
       {...layout}
@@ -213,9 +207,7 @@ const Signup = () => {
         <Button htmlType="button" onClick={onReset}>
           Reset
         </Button>
-        {/* <Button type="link" htmlType="button" onClick={onFill}>
-          Fill form
-        </Button> */}
+        
       </Form.Item>
       <p>{userInfo?.user_name}</p>
       {status===1 ? null :

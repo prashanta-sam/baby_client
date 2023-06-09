@@ -1,39 +1,33 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import { postForm, postJson } from "../../api/Api";
 
-
 const initialState={
     status:0, 
-    userInfo: {},
+    userInfo: [],
     token: localStorage.getItem("token") || "",
     error: null,
     isAuth:false
 }
 
+export const userSignup=createAsyncThunk( 'user/userSignup',
+    async (formData) => {
+        const data = await postForm('user/signup',formData);
+        return data;
+      }
+)
 
-
+export const userSignin=createAsyncThunk( 'user/userSignin',
+    async (formData) => {
+        const data = await postForm('user/signin',formData);
+        return data;
+      }
+)
 
 const UserSlice=createSlice({
     name:'user',
     initialState,
     reducers: {
-        usersLoading(state, action) {
-            // Use a "state machine" approach for loading state instead of booleans
-            if(state.status === 1) {
-                state.status = 0
-            }
-        },
-        usersReceived(state, action) {
-            const {status,token,msg,data} = action.payload;   
-            if(status === 1) 
-            {
-                state.status = 1
-                state.userInfo = data
-                state.error=msg
-                state.isAuth=true
-                localStorage.setItem('token', token);    
-            }
-        },
+       
         logout(state) {
         
             state.error=null
@@ -43,19 +37,56 @@ const UserSlice=createSlice({
             state.userInfo={}
             //localStorage.removeItem("token");
             localStorage.setItem("token", '');
-
+   
        },
+       setError:(state,{payload})=>{
+            state.error=""    
+       }
       
-    }
+    },
+
+        extraReducers: {
+        
+            // product api
+           
+              [userSignup.fulfilled]:  (state, action) => {               
+               
+                const {status,token,msg,data} = action.payload;   
+                state.status = status;
+            
+                state.error = msg 
+                if(status===1)
+                {               
+                   state.userInfo = data;
+                   state.isAuth=true
+                   state.token=token           
+                   localStorage.setItem('token', token);               
+                }     
+              
+            },
+            [userSignin.fulfilled]:  (state, action) => {               
+               
+                const {status,token,msg,data} = action.payload;   
+                state.status = status;
+                state.error = msg 
+                if(status===1)
+                {               
+                   state.userInfo = data;
+                   state.isAuth=true
+                   state.token=token           
+                   localStorage.setItem('token', token);               
+                }     
+              
+            },
+              
+          }
+
 })
 
 
 
-export const userSignup = (formData) => async (dispatch) => {
-    dispatch(usersLoading()); 
-    const response = await postForm('user/signup',formData); 
-    dispatch(usersReceived(response));
 
-}
-export const {usersLoading, usersReceived,logout} = UserSlice.actions;
+
+
+export const {logout,setError} = UserSlice.actions;
 export default UserSlice.reducer

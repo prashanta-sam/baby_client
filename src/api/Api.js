@@ -28,6 +28,7 @@ export const postForm=async (api_name,formData)=>{
             'Content-Type': 'multipart/form-data',            
             }
         })
+      
         return res.data;
       } catch (error) {
         throw new Error(error.response.data.error);

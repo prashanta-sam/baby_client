@@ -79,11 +79,11 @@ export const ProductSlice=createSlice({
 // Action creators are generated for each case reducer function
 export const { 
     increment, 
-    decrement, 
-    incrementByAmount,
+    decrement,     
     getProductList,
     fetchPosts,
     removeProduct,
+    incrementByValue
 
 } = ProductSlice.actions
 

@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { getuser } from '../../Slices/user/testUserSlice'
+import { useNavigate} from 'react-router-dom';
 export const RND = () => {
+  const navigate=useNavigate()
     const [search,setSearch]=useState('')
     const [count,setCount]=useState(0)
 
-
+    const dispatch=useDispatch()
+    const {userInfo,status}=useSelector((state)=> state.testuser)
 
     //======================= for debounce ==================
     const [debounceTimer,setDebounceTimer]=useState(null)
@@ -37,7 +41,7 @@ export const RND = () => {
         setTimeout(async () => {
            const data= await callback();            
             //throttlePause is set to false once the function has been called, allowing the throttle function to loop 
-            if(data.status==1)
+            if(data.status===1)
             {
                 setThrottleTimer(false) 
                 setCount(count + 1)  
@@ -51,7 +55,17 @@ export const RND = () => {
         Throttle(callApiThrottle,500)     
        
     }
+ 
+    const callSlice=async ()=>
+    {
+        dispatch(getuser())
+        console.log(status)
+        if(status===1)
+          navigate('/')
+      
+    }
 
+   
   return (
     <div>
         <p>Debounce Example</p>
@@ -62,6 +76,9 @@ export const RND = () => {
          <p>Throttle Example</p>
          <button onClick={clickMe}>Click Me</button>
          <p> Search count : {count}</p>   
+
+
+         <button onClick={callSlice}>Call API Slice </button>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 
 
 import React, { useEffect } from 'react'
-import { decrement, fetchProduct, increment,removeProduct,removeProd } from '../Slices/product/ProductSlice'
+import { decrement, fetchProduct, increment,removeProd } from '../../Slices/product/ProductSlice'
 import {useDispatch,useSelector} from 'react-redux'
 
 export const ProductList=()=>{
